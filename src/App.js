@@ -35,6 +35,7 @@ const App = props => {
     })
   };
   
+  const [persons, setPersons] =  useState(null);
   const [showPersons, setShowPersons] = useState(false);
 
   const style = {
@@ -47,15 +48,8 @@ const App = props => {
 
   const togglePersonHandle = () => {
     setShowPersons(!showPersons);
-  }
-
-  return (
-    <div className="App">
-      <h1> Hi I'm a React App</h1>
-      <p>This is really working!</p>
-      <button style={style} onClick={togglePersonHandle}> Toggle Persons </button>
-      {
-        (showPersons === true) ?
+    if(showPersons) {
+        setPersons( 
           <div>
             <Person 
               name={personsState.persons[0].name} 
@@ -70,12 +64,20 @@ const App = props => {
             <Person 
               name={personsState.persons[2].name} 
               age={personsState.persons[2].age}/>
-          </div> : null
-      }
-    </div>
+          </div>
+        );
+    } else {
+      setPersons(null);
+    }
+  }
 
-    // React.createElement('div',null, 
-    //     React.createElement('h1', {className: 'App'}, 'Hi, I\'m a React App!!!'))
+  return (
+    <div className="App">
+      <h1> Hi I'm a React App</h1>
+      <p>This is really working!</p>
+      <button style={style} onClick={togglePersonHandle}> Toggle Persons </button>
+      {persons}
+    </div>
   );
 }
 
