@@ -4,39 +4,29 @@ import Person from './Person/Person';
 import { useState } from 'react';
 
 const App = props => {
-  const [personsState, setPersonsState] = useState({
-    persons:  [
-        {name: 'Max', age: 29},
-        {name: 'Manu', age: 30},
-        {name: 'Stephane', age: 35}
-      ],
-    otherState: 'some other value'
-  });
+  const [persons, setPersons] =  useState([
+          {id: 1, name: 'Max', age: 29},
+          {id: 2, name: 'Manu', age: 30},
+          {id: 3, name: 'Stephane', age: 35}
+        ]);
 
-  console.log(personsState);
+  const nameChangeHandler = (event, id) => {
+    const personIndex = persons.findIndex(p => {
+      return p.id === id;
+    });
 
-  const switchNameHandler = (newName) => {
-    setPersonsState({
-      persons: [
-        {name: newName, age: 29},
-        {name: 'Manu', age: 32},
-        {name: 'Stephane', age: 35}
-      ]
-    })
+    const person = {
+      ...persons[personIndex]
+    };
+    person.name = event.target.name;
+    const persons = [...persons];
+    persons[personIndex] = person;
+
+    setPersons(persons);
   };
 
-  const nameChangeHandle = (event) => {
-    setPersonsState({
-      persons: [
-        {name: 'Max', age: 29},
-        {name: event.target.value, age: 32},
-        {name: 'Stephane', age: 29}
-      ]
-    })
-  };
-  
-  const [persons, setPersons] =  useState(null);
   const [showPersons, setShowPersons] = useState(false);
+  const [displayPersons, setDisplayPersons] = useState(null);
 
   const style = {
     backgroundColor: 'white',
@@ -45,38 +35,37 @@ const App = props => {
     padding: '8px',
     cursor: 'pointer'
   }
+  
 
   const togglePersonHandle = () => {
     setShowPersons(!showPersons);
-    if(showPersons) {
-        setPersons( 
-          <div>
-            <Person 
-              name={personsState.persons[0].name} 
-              age={personsState.persons[0].age}/>
-            <Person 
-              name={personsState.persons[1].name} 
-              age={personsState.persons[1].age}
-              click={switchNameHandler.bind(this, 'Max!!')}
-              changed={nameChangeHandle}> 
-                  My Hobbies: Racing
-              </Person>
-            <Person 
-              name={personsState.persons[2].name} 
-              age={personsState.persons[2].age}/>
-          </div>
-        );
-    } else {
-      setPersons(null);
-    }
+    render1(persons);
+  }
+  const deletePersonHandle = (personIndex) => {
+    persons.splice(personIndex, 1);
+    render1(persons);
   }
 
+  const render1 = (persons1) => {
+    if(showPersons) {
+      setDisplayPersons(
+        persons1.map((person, index) => {
+          return <Person click={() =>  deletePersonHandle(index)} 
+                name={person.name} age={person.age} key={person.id}
+                changed = {(event) => nameChangeHandler(event, person.id)}/>
+        })
+      );
+    } else {
+      setDisplayPersons(null);
+    }
+  };
+  
   return (
     <div className="App">
       <h1> Hi I'm a React App</h1>
       <p>This is really working!</p>
       <button style={style} onClick={togglePersonHandle}> Toggle Persons </button>
-      {persons}
+      {displayPersons}
     </div>
   );
 }
